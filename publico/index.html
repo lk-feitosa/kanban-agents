@@ -778,7 +778,7 @@
         <span class="badge-sprint" id="sprint-badge">Sprint 1</span>
       </div>
 
-      <!-- Abas -->
+      <!-- Abas de Navegação -->
       <div class="nav-tabs">
         <button class="tab-btn active" id="tab-quadro-btn" onclick="alternarAba('quadro')">
           <span>📌 Quadro Ativo</span>
@@ -786,6 +786,9 @@
         <button class="tab-btn" id="tab-arquivadas-btn" onclick="alternarAba('arquivadas')">
           <span>📦 Sprints Arquivadas</span>
           <span class="tab-badge" id="sprints-count">0</span>
+        </button>
+        <button class="tab-btn" id="tab-painel-btn" onclick="alternarAba('painel')" title="Acessa o Painel de Agentes e Cotas na porta 3333">
+          <span>📊 Painel de Agentes (:3333)</span>
         </button>
       </div>
 
@@ -818,6 +821,11 @@
   <!-- Stage: Sprints Arquivadas -->
   <div class="archived-view" id="archived-stage">
     <!-- Histórico de Sprints gerado via JS -->
+  </div>
+
+  <!-- Stage: Painel de Agentes Embutido (:3333) -->
+  <div class="painel-embedded-stage" id="painel-stage" style="display:none; width:100%; height:calc(100vh - 61px); background:#0d1117;">
+    <iframe id="painel-iframe" src="" style="width:100%; height:100%; border:none;" title="Painel de Agentes (:3333)"></iframe>
   </div>
 
   <!-- Modal Cartão -->
@@ -922,23 +930,45 @@
     let ultimoScrollUsuario = 0;
     let isArrastando = false;
 
-    // Alternar entre Quadro Ativo e Sprints Arquivadas
+    // Alternar entre Quadro Ativo, Sprints Arquivadas e Painel de Agentes
     function alternarAba(aba) {
       abaAtiva = aba;
       document.getElementById('tab-quadro-btn').classList.toggle('active', aba === 'quadro');
       document.getElementById('tab-arquivadas-btn').classList.toggle('active', aba === 'arquivadas');
+      const btnPainel = document.getElementById('tab-painel-btn');
+      if (btnPainel) btnPainel.classList.toggle('active', aba === 'painel');
 
       const stageQuadro = document.getElementById('board-stage');
       const stageArquivadas = document.getElementById('archived-stage');
+      const stagePainel = document.getElementById('painel-stage');
+      const iframePainel = document.getElementById('painel-iframe');
 
       if (aba === 'quadro') {
         stageQuadro.style.display = 'flex';
         stageArquivadas.classList.remove('active');
-      } else {
+        stageArquivadas.style.display = 'none';
+        if (stagePainel) stagePainel.style.display = 'none';
+      } else if (aba === 'arquivadas') {
         stageQuadro.style.display = 'none';
+        stageArquivadas.style.display = 'block';
         stageArquivadas.classList.add('active');
+        if (stagePainel) stagePainel.style.display = 'none';
         renderizarSprintsArquivadas();
+      } else if (aba === 'painel') {
+        stageQuadro.style.display = 'none';
+        stageArquivadas.classList.remove('active');
+        stageArquivadas.style.display = 'none';
+        if (stagePainel) {
+          stagePainel.style.display = 'block';
+          if (iframePainel && (!iframePainel.src || iframePainel.src === 'about:blank' || iframePainel.src === window.location.href)) {
+            iframePainel.src = `http://${window.location.hostname || 'localhost'}:3333/`;
+          }
+        }
       }
+
+      try {
+        localStorage.setItem('kanban_aba_ativa', aba);
+      } catch (e) {}
     }
 
     // Carrega o quadro da API
@@ -1441,6 +1471,13 @@
     }
 
     // Inicialização
+    try {
+      const abaSalva = localStorage.getItem('kanban_aba_ativa');
+      if (abaSalva && ['quadro', 'arquivadas', 'painel'].includes(abaSalva)) {
+        alternarAba(abaSalva);
+      }
+    } catch (e) {}
+
     carregarQuadro(true);
     setInterval(() => carregarQuadro(false), 4000);
   </script>
