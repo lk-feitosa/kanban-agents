@@ -179,26 +179,18 @@
       background: #0d1117;
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 5px 10px 5px 28px;
+      padding: 5px 10px;
       border-radius: var(--radius-sm);
       font-size: 12px;
-      width: 200px;
+      width: 180px;
       outline: none;
       transition: all 0.2s ease;
     }
 
     .search-box input:focus {
       border-color: var(--border-focus);
-      width: 240px;
+      width: 220px;
       box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 9px;
-      font-size: 12px;
-      color: var(--text-dim);
-      pointer-events: none;
     }
 
     .btn {
@@ -771,9 +763,8 @@
   <!-- Header -->
   <header class="kanban-header">
     <div class="brand">
-      <span class="brand-icon">🦉</span>
       <div class="brand-title">
-        <span>Kanban do Projeto</span>
+        <span>Kanban</span>
         <span class="badge-proj" id="proj-badge">...</span>
         <span class="badge-sprint" id="sprint-badge">Sprint 1</span>
       </div>
@@ -781,14 +772,11 @@
       <!-- Abas de Navegação -->
       <div class="nav-tabs">
         <button class="tab-btn active" id="tab-quadro-btn" onclick="alternarAba('quadro')">
-          <span>📌 Quadro Ativo</span>
+          <span>Quadro</span>
         </button>
         <button class="tab-btn" id="tab-arquivadas-btn" onclick="alternarAba('arquivadas')">
-          <span>📦 Sprints Arquivadas</span>
+          <span>Arquivadas</span>
           <span class="tab-badge" id="sprints-count">0</span>
-        </button>
-        <button class="tab-btn" id="tab-painel-btn" onclick="alternarAba('painel')" title="Acessa o Painel de Agentes e Cotas na porta 3333">
-          <span>📊 Painel de Agentes (:3333)</span>
         </button>
       </div>
 
@@ -800,16 +788,15 @@
 
     <div class="header-controls">
       <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="filtro-busca" placeholder="Buscar tarefas, agentes..." oninput="filtrarCartoes()">
+        <input type="text" id="filtro-busca" placeholder="Buscar tarefas..." oninput="filtrarCartoes()">
       </div>
       <button class="btn btn-archive" onclick="abrirModalArquivar()" title="Finaliza o ciclo atual, arquiva as tarefas concluídas e limpa a coluna">
-        <span>🏁 Finalizar Sprint</span>
+        <span>Finalizar Sprint</span>
       </button>
       <button class="btn btn-primary" onclick="abrirModalCriar()">
-        <span>➕ Novo Cartão</span>
+        <span>+ Novo Cartão</span>
       </button>
-      <button class="btn" onclick="carregarQuadro(true)" title="Recarregar do disco">🔄</button>
+      <button class="btn" onclick="carregarQuadro(true)" title="Recarregar do disco">Recarregar</button>
     </div>
   </header>
 
@@ -821,11 +808,6 @@
   <!-- Stage: Sprints Arquivadas -->
   <div class="archived-view" id="archived-stage">
     <!-- Histórico de Sprints gerado via JS -->
-  </div>
-
-  <!-- Stage: Painel de Agentes Embutido (:3333) -->
-  <div class="painel-embedded-stage" id="painel-stage" style="display:none; width:100%; height:calc(100vh - 61px); background:#0d1117;">
-    <iframe id="painel-iframe" src="" style="width:100%; height:100%; border:none;" title="Painel de Agentes (:3333)"></iframe>
   </div>
 
   <!-- Modal Cartão -->
@@ -856,10 +838,10 @@
           <div class="form-group">
             <label>Prioridade</label>
             <select class="form-control" id="modal-select-prio">
-              <option value="urgente">🚨 Urgente</option>
-              <option value="alta" selected>⚡ Alta</option>
-              <option value="media">🟡 Média</option>
-              <option value="baixa">🔵 Baixa</option>
+              <option value="urgente">Urgente</option>
+              <option value="alta" selected>Alta</option>
+              <option value="media">Média</option>
+              <option value="baixa">Baixa</option>
             </select>
           </div>
         </div>
@@ -885,7 +867,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn" id="btn-modal-excluir" style="color:var(--prio-urgente);" onclick="excluirCartaoModal()">🗑️ Excluir</button>
+        <button class="btn" id="btn-modal-excluir" style="color:var(--prio-urgente);" onclick="excluirCartaoModal()">Excluir</button>
         <div style="display:flex; gap:8px;">
           <button class="btn" onclick="fecharModalCard()">Cancelar</button>
           <button class="btn btn-primary" onclick="salvarCartaoModal()">Salvar Cartão</button>
@@ -898,7 +880,7 @@
   <div class="modal-overlay" id="modal-arquivar">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>🏁 Finalizar Sprint & Arquivar</h3>
+        <h3>Finalizar Sprint &amp; Arquivar</h3>
         <button class="modal-close" onclick="fecharModalArquivar()">✕</button>
       </div>
       <div class="modal-body">
@@ -930,40 +912,24 @@
     let ultimoScrollUsuario = 0;
     let isArrastando = false;
 
-    // Alternar entre Quadro Ativo, Sprints Arquivadas e Painel de Agentes
+    // Alternar entre Quadro Ativo e Sprints Arquivadas
     function alternarAba(aba) {
       abaAtiva = aba;
       document.getElementById('tab-quadro-btn').classList.toggle('active', aba === 'quadro');
       document.getElementById('tab-arquivadas-btn').classList.toggle('active', aba === 'arquivadas');
-      const btnPainel = document.getElementById('tab-painel-btn');
-      if (btnPainel) btnPainel.classList.toggle('active', aba === 'painel');
 
       const stageQuadro = document.getElementById('board-stage');
       const stageArquivadas = document.getElementById('archived-stage');
-      const stagePainel = document.getElementById('painel-stage');
-      const iframePainel = document.getElementById('painel-iframe');
 
       if (aba === 'quadro') {
         stageQuadro.style.display = 'flex';
         stageArquivadas.classList.remove('active');
         stageArquivadas.style.display = 'none';
-        if (stagePainel) stagePainel.style.display = 'none';
-      } else if (aba === 'arquivadas') {
+      } else {
         stageQuadro.style.display = 'none';
         stageArquivadas.style.display = 'block';
         stageArquivadas.classList.add('active');
-        if (stagePainel) stagePainel.style.display = 'none';
         renderizarSprintsArquivadas();
-      } else if (aba === 'painel') {
-        stageQuadro.style.display = 'none';
-        stageArquivadas.classList.remove('active');
-        stageArquivadas.style.display = 'none';
-        if (stagePainel) {
-          stagePainel.style.display = 'block';
-          if (iframePainel && (!iframePainel.src || iframePainel.src === 'about:blank' || iframePainel.src === window.location.href)) {
-            iframePainel.src = `http://${window.location.hostname || 'localhost'}:3333/`;
-          }
-        }
       }
 
       try {
@@ -1063,7 +1029,7 @@
           </div>
           <div class="col-cards" data-col-id="${col.id}" ondragover="aoArrastarSobre(event)" ondragleave="aoSairDoArrasto(event)" ondrop="aoSoltarCard(event, '${col.id}')">
           </div>
-          <button class="btn-add-card" onclick="abrirModalCriar('${col.id}')">➕ Adicionar cartão</button>
+          <button class="btn-add-card" onclick="abrirModalCriar('${col.id}')">+ Adicionar cartão</button>
         `;
 
         const cardsContainer = colEl.querySelector('.col-cards');
@@ -1106,7 +1072,7 @@
         container.innerHTML = `
           <div style="text-align:center; padding: 40px; color: var(--text-dim); background: var(--col-bg); border: 1px dashed var(--border); border-radius: var(--radius);">
             <h3>Nenhuma sprint arquivada ainda</h3>
-            <p style="font-size:13px; margin-top:8px;">Quando você concluir um ciclo de entregas, clique no botão <b>🏁 Finalizar Sprint</b> no topo para arquivar as tarefas concluídas e limpar seu quadro.</p>
+            <p style="font-size:13px; margin-top:8px;">Quando você concluir um ciclo de entregas, clique no botão <b>Finalizar Sprint</b> no topo para arquivar as tarefas concluídas e limpar seu quadro.</p>
           </div>
         `;
         return;
@@ -1122,9 +1088,9 @@
         (sprint.tarefas || []).forEach(t => {
           tasksHtml += `
             <div class="archived-task-item">
-              <span class="archived-task-title">✓ ${t.titulo}</span>
+              <span class="archived-task-title">${t.titulo}</span>
               <div class="archived-task-meta">
-                <span>👤 ${t.agente || "Equipe"}</span>
+                <span>${t.agente || "Equipe"}</span>
                 <span class="pill prio-${t.prioridade || 'media'}">${t.prioridade || 'média'}</span>
               </div>
             </div>
@@ -1134,7 +1100,7 @@
         card.innerHTML = `
           <div class="sprint-history-header">
             <div class="sprint-history-title">
-              <span>📦 ${sprint.nome || "Sprint"}</span>
+              <span>${sprint.nome || "Sprint"}</span>
               <span class="badge-proj">${sprint.total_tarefas || (sprint.tarefas || []).length} tarefas entregues</span>
             </div>
             <span class="sprint-history-date">Arquivado em: ${dataFim}</span>
@@ -1170,7 +1136,7 @@
 
       const prio = (c.prioridade || "media").toLowerCase();
       const prioHtml = `<span class="pill prio-${prio}">${prio}</span>`;
-      const agenteHtml = c.agente ? `<span class="card-agente">👤 ${c.agente}</span>` : '';
+      const agenteHtml = c.agente ? `<span class="card-agente">${c.agente}</span>` : '';
 
       let checklistHtml = '';
       const chkList = c.checklist || [];
@@ -1217,8 +1183,12 @@
             ${agenteHtml}
           </div>
           <div class="card-actions-hover">
-            <button class="btn-card-action" onclick="abrirModalEditar('${c.id}')" title="Editar cartão">✏️</button>
-            <button class="btn-card-action" onclick="excluirCartaoDireto('${c.id}')" title="Excluir cartão">🗑️</button>
+            <button class="btn-card-action" onclick="abrirModalEditar('${c.id}')" title="Editar cartão">
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25a1.75 1.75 0 0 1 .445-.758l8.61-8.61zm1.414 1.06a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354l-1.086-1.086zM10.28 4.81 3.536 11.554a.25.25 0 0 0-.064.108l-.558 1.953 1.953-.558a.249.249 0 0 0 .108-.064l6.744-6.744-1.44-1.44z"/></svg>
+            </button>
+            <button class="btn-card-action" onclick="excluirCartaoDireto('${c.id}')" title="Excluir cartão">
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25zM4.997 6.178a.75.75 0 0 1 .75.744l.27 6.5a.75.75 0 0 1-1.498.062l-.27-6.5a.75.75 0 0 1 .748-.806zm5.256.744a.75.75 0 0 0-1.498-.062l-.27 6.5a.75.75 0 0 0 1.498.062l.27-6.5zm-2.253.75a.75.75 0 0 1 1.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5z"/></svg>
+            </button>
           </div>
         </div>
 
