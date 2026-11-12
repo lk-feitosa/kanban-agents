@@ -206,6 +206,7 @@ class ServidorTCPExclusivo(socketserver.ThreadingTCPServer):
 
     def server_bind(self):
         if sys.platform == "win32" and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.allow_reuse_address = False
             try:
                 self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
             except OSError:
