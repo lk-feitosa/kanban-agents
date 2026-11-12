@@ -379,6 +379,9 @@ def main():
     parser.add_argument("--porta", type=int, default=PORTA_PADRAO, help="Porta HTTP (padrão: 3334)")
     parser.add_argument("--projeto", type=str, default=None, help="Caminho da raiz do projeto")
     parser.add_argument("--sem-portal", action="store_true", help="Não tenta abrir portal no Maestri")
+    parser.add_argument(
+        "--navegador", "--browser", dest="navegador", action="store_true", help="Abre automaticamente o Kanban no navegador padrão"
+    )
     args = parser.parse_args()
 
     projeto = localizar_projeto_ativo(args.projeto)
@@ -401,6 +404,15 @@ def main():
     url_portal = f"http://localhost:{porta}/"
     if not args.sem_portal:
         abrir_portal_maestri(url_portal, "Kanban")
+
+    if args.navegador:
+        print("[+] Abrindo Kanban no seu navegador...")
+        try:
+            import webbrowser
+            webbrowser.open(url_portal)
+            print("  ✔ Navegador aberto em:", url_portal)
+        except Exception as e:
+            print(f"  [-] Erro ao abrir navegador: {e}")
 
     try:
         srv = ServidorTCPExclusivo(("0.0.0.0", porta), HandlerKanban)

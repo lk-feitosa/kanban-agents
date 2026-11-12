@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="assets/avatar.jpg" alt="Kanban Logo" width="120" style="border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover;" onerror="this.src='assets/logo.png'" />
+<img src="assets/avatar.jpg" alt="Kanban Logo" width="120" style="border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover;" onerror="this.src='assets/logo.png'" />
 
 # kanban-agents
 
-**Lightweight, native, project-isolated kan.bn-style minimalist agile board for Maestri Spatial Development Workspace.**
+**Lightweight, native, project-isolated kan.bn-style minimalist agile board for the Maestri Spatial Development Workspace.**
 
 🌐 **[Português](README.md)** | **[English](README.en.md)**
 
@@ -13,6 +13,7 @@
 [![Multiplatform](https://img.shields.io/badge/platform-Windows%20|%20Linux%20|%20macOS-informational.svg?style=flat-square)](#quick-start)
 [![Zero Docker](https://img.shields.io/badge/docker-zero%20containers-success.svg?style=flat-square)](#key-features)
 [![Zero Auth](https://img.shields.io/badge/auth-zero%20login-purple.svg?style=flat-square)](#key-features)
+[![Theme: kan.bn](https://img.shields.io/badge/theme-kan.bn%20pure%20dark-252525.svg?style=flat-square)](#key-features)
 
 </div>
 
@@ -20,29 +21,34 @@
 
 ## 🌟 Overview
 
-`kanban-agents` is a minimalist, responsive task management application designed specifically to operate as an embedded **Portal** node within the **Maestri Canvas** or directly in your local browser for individual developer workflows.
+`kanban-agents` is a minimalist, responsive task management application designed specifically to operate as an embedded **Portal** node within the **Maestri Canvas** or directly in a **dedicated window on a secondary monitor** for individual developer workflows and autonomous agent tracking.
 
 Inspired by the clean aesthetic of **kan.bn**, `kanban-agents` runs via an ultra-lightweight native Python HTTP server (< 20 MB RAM footprint), saving state atomically and deterministically directly into the **`.kanban/board.json`** file in your active workspace root — zero Docker overhead, zero external database, and zero redundant enterprise SaaS clutter.
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        MAESTRI CANVAS                           │
-│                                                                 │
-│   [ Terminal: Minerva ] ──(reads & updates)─┐                   │
-│   [ Terminal: Team CODES ]                  │                   │
-│                                             ▼                   │
-│   [ Portal: Kanban ] <── http://127.0.0.1:3334 ── [.kanban/]    │
-│            │                                                    │
-│            └───(Finalize Sprint)──► [.kanban/board.json]        │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                            MAESTRI CANVAS                              │
+│                                                                        │
+│   [ Terminal 1: Minerva    ] ──┐                                       │
+│   [ Terminal 2: Team CODES ] ──┼── (Atomic Read & Write) ────────┐     │
+│   [ Terminal 3: Agy        ] ──┘                                 │     │
+│                                                                  ▼     │
+│   [ Active Workspace       ] ─────── [.kanban/board.json] ───────┤     │
+│                                                                  │     │
+│   [ Portal / Ext Monitor   ] <────── http://127.0.0.1:3334 ──────┘     │
+│     ├── Agile Columns (Backlog, To Do, In Progress, Review, Done)      │
+│     ├── Rapid Task Creation Modal ("Create another" batch flow)        │
+│     ├── Full Task Detail View (Breadcrumbs, Checklists, Logs & Tags)   │
+│     └── Sprint Lifecycle & 1-Click Automated Archiving                 │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ✨ Key Features in this Version
+## ✨ Key Features
 
 - **🎨 Minimalist Black & Grey Design (kan.bn Aesthetic)**:
-  - Neutral high-contrast dark palette: Canvas at `#141414`, columns at `#1c1c1c`, and elevated cards at `#252525` with hover at `#2e2e2e`.
+  - Strict neutral high-contrast dark palette: Canvas at `#141414`, columns at `#1c1c1c`, and elevated cards at `#252525` with hover at `#2e2e2e`.
   - Zero bluish/tokyo-night tint, eliminating muddy "black on black" and ensuring crisp surface hierarchy.
   - Consolidated top header (no redundant sidebar) dedicating **100% of the screen width** to your board.
   - 36px modern square logo with profile avatar.
@@ -103,36 +109,84 @@ cd ~/DEV/kanban-agents
 python3 kanban.py
 ```
 
-### Open as Portal on Maestri Canvas:
+### Opening as a Portal in Maestri Canvas:
 
-From any terminal in Maestri or the Minerva orchestrator:
+In any Maestri terminal or in Minerva's terminal:
 ```bash
 maestri portal create http://localhost:3334 "Kanban"
 ```
 
 ---
 
-## 💻 Command Line Options
+## 💻 Usage
+
+In any terminal inside your Maestri workspace, run:
+
+```bash
+python kanban.py
+```
+
+The server:
+1. Resolves the active project's root folder (via Git or Maestri environment).
+2. Atomically loads or initializes `.kanban/board.json`.
+3. Allocates a free port (default `3334`) and publishes it to `.maestri/ports.json`.
+4. Opens the Portal node inside the Maestri Canvas (or in your default browser if requested).
+
+### Command Line Options
 
 ```text
 Usage: python kanban.py [OPTIONS]
 
 Options:
-  --porta INT        HTTP port (default: 3334, with auto-fallback)
-  --projeto PATH     Root path of target project workspace (default: auto-detected)
-  --sem-portal       Starts web server without attempting to open Maestri Canvas portal
-  -h, --help         Show help and options
+  --porta INT        HTTP server port (default: 3334, with intelligent auto-fallback)
+  --projeto PATH     Root path of the project to bind (default: auto-detected via git/maestri)
+  --sem-portal       Start server without spawning a Portal node in Maestri
+  --navegador        Automatically open Kanban in your default browser
+  -h, --help         Show help message and exit
 ```
+
+### Secondary Monitor Usage (Dedicated App Mode)
+
+If you want to keep the Kanban board **permanently visible on a secondary monitor** without taking up 3D canvas space in Maestri while retaining full workspace connectivity:
+
+1. **Start bound to a specific workspace (without opening a portal node):**
+   ```bash
+   python kanban.py --projeto "S:\DEV\your-project" --sem-portal --navegador
+   ```
+   The daemon binds to that specific directory's `.kanban/board.json`, registers the port, and launches your browser.
+
+2. **Open as a Native WebApp (borderless window without address bar or tabs):**
+   - In **Microsoft Edge**:
+     ```cmd
+     msedge --app=http://localhost:3334
+     ```
+   - In **Google Chrome**:
+     ```cmd
+     chrome --app=http://localhost:3334
+     ```
+   - In **Brave**:
+     ```cmd
+     brave --app=http://localhost:3334
+     ```
+   - Drag the window to your secondary monitor and press `F11` for continuous borderless screen (ideal as an ambient project task radar).
+
+3. **If Kanban is already running inside Maestri:**
+   - The local server is already running on the active port (default `http://localhost:3334`).
+   - Simply open that URL directly on your secondary monitor (or via `msedge --app=http://localhost:3334`).
+   - You can close the Portal card inside the Maestri 3D canvas to reclaim space: **the background daemon remains alive**, continuously serving and updating your secondary screen.
+
+4. **Bi-Directional Real-Time Sync:**
+   - When you or your agents (Minerva, Claude Code, Codex) add, move, or complete tasks via file or API, your dedicated screen updates seamlessly via lightweight polling (4s) with zero page reload and absolute horizontal/vertical scroll preservation.
 
 ---
 
 ## 🛠️ How It Works
 
 ### 1. Atomic Workspace Detection
-`kanban.py` dynamically locates the active workspace via `MAESTRI_PROJECT_DIR`, parent Git directories, or workspace conventions.
+`kanban.py` dynamically resolves the active project directory using `MAESTRI_PROJECT_DIR`, parent Git repositories, or standard workspace conventions.
 
-### 2. State in `.kanban/board.json`
-Active board state is persisted deterministically on disk:
+### 2. Format of `.kanban/board.json`
+The active board is stored deterministically in the workspace root:
 
 ```json
 {
@@ -153,7 +207,7 @@ Active board state is persisted deterministically on disk:
       "id": "card-01",
       "colunaId": "col-todo",
       "titulo": "TES-3: Understanding Kanban",
-      "descricao": "Agile workflow principles and continuous improvement",
+      "descricao": "Agile principles and workflow specifications",
       "prioridade": "alta",
       "agente": "Minerva",
       "dataVencimento": "13º nov",
@@ -162,12 +216,22 @@ Active board state is persisted deterministically on disk:
       ],
       "checklist": [
         { "texto": "Define WIP limits", "concluido": true },
-        { "texto": "Value stream mapping", "concluido": false }
+        { "texto": "Map value stream", "concluido": false }
       ]
     }
   ]
 }
 ```
+
+### 3. Sprint Lifecycle & Archiving
+When clicking **"Finalize Sprint"**:
+- Cards in the **Done** column are bundled under the active sprint and appended to `sprints_arquivadas`.
+- The Done column is cleared on the active board.
+- The sprint counter increments automatically (e.g., `Sprint 1` ➔ `Sprint 2`).
+- All deliverables remain auditable in the archived sprints modal.
+
+### 4. Smart Port Manager & Collision Fallback
+If port `3334` is occupied by another process, `kanban.py` probes sequentially until finding an open port. The bound port is idempotently recorded to `.maestri/ports.json` for zero-configuration discovery.
 
 ---
 
@@ -175,11 +239,11 @@ Active board state is persisted deterministically on disk:
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/` or `/index.html` | Visual Kanban board and sprint archives |
-| `GET` | `/health` | Service health status and active port |
+| `GET` | `/` or `/index.html` | Visual Kanban board and sprint history |
+| `GET` | `/health` | Healthcheck and active port indicator |
 | `GET` | `/api/kanban` | Returns current board state JSON (`.kanban/board.json`) |
-| `POST` | `/api/kanban` | Atomically persists board updates to disk |
-| `POST` | `/api/kanban/arquivar` | Archives completed tasks and advances sprint cycle |
+| `POST` | `/api/kanban` | Atomically updates board state |
+| `POST` | `/api/kanban/arquivar` | Archives completed cards, resets Done, advances sprint |
 | `GET` | `/api/kanban/sprints` | Returns history of archived sprints |
 
 ---
@@ -188,20 +252,30 @@ Active board state is persisted deterministically on disk:
 
 ```text
 kanban-agents/
-├── 📁 assets/                 <-- Brand identity, avatar and logo
-├── 📁 publico/                <-- Modern web UI (Vanilla JS + Pure Dark CSS)
-│   ├── 📁 assets/             <-- Static assets served by web app
-│   └── 📄 index.html          <-- Board, task creation, detail view, archives
-├── 📄 kanban.py               <-- Native HTTP server, port collision & REST API
-├── 📄 iniciar-kanban.bat      <-- Interactive Windows batch launcher
-├── 📄 iniciar-silencioso.vbs  <-- 100% background silent launcher
+├── 📁 assets/                 <-- Branding, avatar, and logos
+├── 📁 publico/                <-- Modern web UI (Vanilla JS + Pure kan.bn Dark CSS)
+│   ├── 📁 assets/             <-- Static media assets
+│   └── 📄 index.html          <-- Kanban board, creation modal, detail view & sprints
+├── 📄 kanban.py               <-- Native HTTP server, port manager, CLI flags & REST API
+├── 📄 iniciar-kanban.bat      <-- Interactive launcher for Windows
+├── 📄 iniciar-silencioso.vbs  <-- 100% background silent launcher (no console window)
 ├── 📄 README.md               <-- Complete documentation in Portuguese
 ├── 📄 README.en.md            <-- Full documentation in English
-└── 📄 .gitignore              <-- Git ignore rules
+└── 📄 .gitignore              <-- Git exclusion rules
 ```
 
 ---
 
-## 📄 License
+## 🔒 Security & Privacy
 
-Distributed under the **MIT** license. Official part of the **Minerva & Maestri** ecosystem.
+- **100% Local Execution**: The server binds strictly to `127.0.0.1` (localhost). No task descriptions, comments, or telemetry leave your machine.
+- **Atomic Disk Writes**: State files are saved using atomic replacement (write to temp file then atomic rename), preventing corrupted JSON files even during power loss.
+- **Full Data Ownership**: Your board data resides inside your project repository. You control whether `.kanban/` is committed to Git.
+
+---
+
+## 📄 License & Credits
+
+Distributed under the **MIT** License.
+
+Inspired by [kan.bn](https://kan.bn) and built as an integral part of the **Minerva & Maestri** productivity ecosystem.

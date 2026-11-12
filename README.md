@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/avatar.jpg" alt="Kanban Logo" width="120" style="border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover;" onerror="this.src='assets/logo.png'" />
+<img src="assets/avatar.jpg" alt="Kanban Logo" width="120" style="border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover;" onerror="this.src='assets/logo.png'" />
 
 # kanban-agents
 
@@ -13,6 +13,7 @@
 [![Multiplataforma](https://img.shields.io/badge/plataforma-Windows%20|%20Linux%20|%20macOS-informational.svg?style=flat-square)](#início-rápido)
 [![Zero Docker](https://img.shields.io/badge/docker-zero%20containers-success.svg?style=flat-square)](#destaques)
 [![Zero Auth](https://img.shields.io/badge/auth-zero%20login-purple.svg?style=flat-square)](#destaques)
+[![Tema kan.bn](https://img.shields.io/badge/tema-kan.bn%20pure%20dark-252525.svg?style=flat-square)](#destaques)
 
 </div>
 
@@ -20,26 +21,31 @@
 
 ## 🌟 O que é
 
-`kanban-agents` é um gestor de tarefas visual minimalista e funcional, projetado especificamente para operar como um nó de **Portal** integrado no **Maestri Canvas** ou diretamente no navegador local para demandas individuais de desenvolvimento.
+`kanban-agents` é um gestor de tarefas visual minimalista e funcional, projetado especificamente para operar como um nó de **Portal** integrado no **Maestri Canvas** ou diretamente em uma **janela dedicada no monitor secundário** para demandas individuais e acompanhamento do time de agentes.
 
 Inspirado na estética refinada do **kan.bn**, o `kanban-agents` roda com um servidor nativo ultraleve em Python (< 20 MB de RAM), salvando o estado de forma atômica e versionável diretamente no arquivo **`.kanban/board.json`** na raiz do seu projeto ativo, sem containers pesados, sem banco de dados externo e sem menus corporativos desnecessários.
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        MAESTRI CANVAS                           │
-│                                                                 │
-│   [ Terminal: Minerva ] ──(lê e atualiza)──┐                    │
-│   [ Terminal: Team CODES ]                 │                    │
-│                                            ▼                    │
-│   [ Portal: Kanban ] <── http://127.0.0.1:3334 ── [.kanban/]    │
-│            │                                                    │
-│            └───(Finalizar Sprint)──► [.kanban/board.json]       │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                            MAESTRI CANVAS                              │
+│                                                                        │
+│   [ Terminal 1: Minerva    ] ──┐                                       │
+│   [ Terminal 2: Team CODES ] ──┼── (Leitura & Escrita Atômica) ──┐     │
+│   [ Terminal 3: Agy        ] ──┘                                 │     │
+│                                                                  ▼     │
+│   [ Workspace Ativo        ] ─────── [.kanban/board.json] ───────┤     │
+│                                                                  │     │
+│   [ Portal / Monitor Ext   ] <────── http://127.0.0.1:3334 ──────┘     │
+│     ├── Colunas Ágeis (Backlog, A Fazer, Em Progresso, Revisão, Feito) │
+│     ├── Modal de Criação Rápida ("Criar outro" em lote contínuo)       │
+│     ├── Visualização Completa (Breadcrumbs, Checklists, Logs & Tags)   │
+│     └── Ciclos de Sprint & Arquivamento Automático em 1 Clique         │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ✨ Destaques da Nova Versão
+## ✨ Destaques
 
 - **🎨 Design Minimalista Preto & Cinza (Estilo kan.bn)**:
   - Paleta em tons estritamente neutros e alto contraste: Canvas em `#141414`, colunas em `#1c1c1c` e cartões elevados em `#252525` com hover em `#2e2e2e`.
@@ -91,7 +97,7 @@ cd S:\DEV\kanban-agents
 iniciar-kanban.bat
 ```
 
-Ou em **segundo plano silencioso** (sem janela preta):
+Ou em **segundo plano silencioso** (sem janela preta de console):
 ```cmd
 wscript iniciar-silencioso.vbs
 ```
@@ -112,7 +118,21 @@ maestri portal create http://localhost:3334 "Kanban"
 
 ---
 
-## 💻 Opções de Linha de Comando
+## 💻 Uso
+
+Em qualquer terminal dentro do seu workspace no Maestri, digite:
+
+```bash
+python kanban.py
+```
+
+O servidor:
+1. Resolve o diretório raiz do projeto ativo (via Git ou ambiente do Maestri).
+2. Carrega ou inicializa atomicamente o arquivo `.kanban/board.json`.
+3. Aloca a porta livre (padrão `3334`) e registra em `.maestri/ports.json`.
+4. Abre automaticamente o nó de Portal dentro do Maestri Canvas (ou no seu navegador se solicitado).
+
+### Opções de Linha de Comando
 
 ```text
 Uso: python kanban.py [OPÇÕES]
@@ -121,15 +141,50 @@ Opções:
   --porta INT        Porta HTTP do servidor (padrão: 3334, com auto-fallback inteligente)
   --projeto CAMINHO  Caminho da raiz do projeto a carregar (padrão: auto-detectado via git/maestri)
   --sem-portal       Inicia o servidor web sem tentar abrir automaticamente o nó de Portal no Maestri
+  --navegador        Abre automaticamente o Kanban no navegador padrão
   -h, --help         Exibe a mensagem de ajuda e opções
 ```
+
+### Uso em Monitor Secundário (Modo App Dedicado)
+
+Se você deseja manter o quadro Kanban **sempre visível em um monitor secundário** sem ocupar o espaço do canvas 3D do Maestri, mas mantendo a conexão total com o workspace:
+
+1. **Iniciar vinculado a um workspace específico (sem criar portal no canvas):**
+   ```bash
+   python kanban.py --projeto "S:\DEV\seu-projeto" --sem-portal --navegador
+   ```
+   O servidor carrega o `.kanban/board.json` daquele projeto exato, grava a porta ativa e abre no seu navegador.
+
+2. **Abrir como WebApp nativo (sem barras de navegação ou abas):**
+   Para transformar a página em um aplicativo desktop nativo sem barras de URL e sem abas:
+   - No **Microsoft Edge**:
+     ```cmd
+     msedge --app=http://localhost:3334
+     ```
+   - No **Google Chrome**:
+     ```cmd
+     chrome --app=http://localhost:3334
+     ```
+   - No **Brave**:
+     ```cmd
+     brave --app=http://localhost:3334
+     ```
+   - Arraste a janela para o seu monitor secundário e aperte `F11` para tela cheia contínua (estilo dashboard permanente de demandas).
+
+3. **Se o Kanban já estiver ativo no Maestri:**
+   - O servidor local já está em execução na porta indicada (padrão `http://localhost:3334`).
+   - Basta abrir essa URL diretamente no monitor secundário (ou via `msedge --app=http://localhost:3334`).
+   - Você pode fechar o card de Portal dentro do canvas do Maestri para liberar espaço: **o servidor continuará ativo em segundo plano**, sincronizando seu monitor secundário em tempo real.
+
+4. **Sincronização Atômica Bidirecional:**
+   - Quando você ou seus agentes (Minerva, Claude Code, Codex) adicionarem, moverem ou concluírem tarefas via arquivo ou API, o monitor secundário atualiza automaticamente via polling leve (4s) com preservação absoluta da posição de rolagem horizontal e vertical.
 
 ---
 
 ## 🛠️ Como Funciona
 
 ### 1. Detecção Atômica do Workspace
-O `kanban.py` resolve dinamicamente a pasta do projeto ativo através da variável `MAESTRI_PROJECT_DIR`, do diretório Git pai ou de convenções do workspace.
+O `kanban.py` resolve dinamicamente a pasta do projeto ativo através da variável de ambiente `MAESTRI_PROJECT_DIR`, do diretório Git pai ou de convenções do workspace.
 
 ### 2. Estrutura do Arquivo `.kanban/board.json`
 O quadro ativo é armazenado de forma determinística e versionável na raiz do projeto:
@@ -169,6 +224,16 @@ O quadro ativo é armazenado de forma determinística e versionável na raiz do 
 }
 ```
 
+### 3. Ciclo de Vida da Sprint & Arquivamento
+Ao acionar **"Finalizar Sprint"**:
+- Os cartões presentes na coluna **Concluído** são agrupados sob a sprint atual e movidos para o vetor `sprints_arquivadas`.
+- A coluna de concluídos é limpa no quadro ativo.
+- O contador da sprint avança automaticamente (ex: `Sprint 1` ➔ `Sprint 2`).
+- Todo o histórico permanece acessível e auditável na aba de sprints arquivadas.
+
+### 4. Gerenciamento Inteligente de Portas & Anti-Colisão
+Se a porta `3334` já estiver ocupada por outra instância ou processo do sistema operacional, o `kanban.py` realiza sondagens incrementais até alocar uma porta livre. O endereço resultante é publicado de forma idempotente em `.maestri/ports.json`, permitindo que outros utilitários e painéis descubram o serviço sem configuração manual.
+
 ---
 
 ## 📡 Endpoints da API REST
@@ -189,10 +254,10 @@ O quadro ativo é armazenado de forma determinística e versionável na raiz do 
 ```text
 kanban-agents/
 ├── 📁 assets/                 <-- Identidade visual, avatar e logo
-├── 📁 publico/                <-- Interface web moderna (Vanilla JS + CSS Dark puro)
+├── 📁 publico/                <-- Interface web moderna (Vanilla JS + CSS Dark kan.bn puro)
 │   ├── 📁 assets/             <-- Assets estáticos servidos pela aplicação web
 │   └── 📄 index.html          <-- Quadro Kanban, modal de criação, detalhes e sprints
-├── 📄 kanban.py               <-- Servidor HTTP nativo, anti-colisão e API REST
+├── 📄 kanban.py               <-- Servidor HTTP nativo, anti-colisão, flags CLI e API REST
 ├── 📄 iniciar-kanban.bat      <-- Launcher interativo para Windows
 ├── 📄 iniciar-silencioso.vbs  <-- Launcher 100% em segundo plano (sem janela)
 ├── 📄 README.md               <-- Documentação completa em Português
@@ -202,6 +267,16 @@ kanban-agents/
 
 ---
 
-## 📄 Licença
+## 🔒 Segurança e Privacidade
 
-Distribuído sob a licença **MIT**. Parte oficial do ecossistema de produtividade **Minerva & Maestri**.
+- **Operação 100% Local**: O servidor se vincula exclusivamente a `127.0.0.1` (localhost). Nenhuma tarefa, anotação ou métrica é enviada para a internet ou para serviços de nuvem externos.
+- **Gravação Atômica em Disco**: O arquivo `.kanban/board.json` é gravado utilizando operações atômicas (escrita em arquivo temporário seguida de substituição atômica), prevenindo corrupção de dados mesmo em caso de encerramento abrupto.
+- **Isolamento de Dados**: Seus dados pertencem ao seu repositório local. É possível incluir ou excluir `.kanban/` no seu controle de versão Git conforme a conveniência da sua equipe.
+
+---
+
+## 📄 Créditos e Licença
+
+Distribuído sob a licença **MIT**.
+
+Inspirado no design limpo do [kan.bn](https://kan.bn) e construído como parte integrante do ecossistema de produtividade **Minerva & Maestri**.
