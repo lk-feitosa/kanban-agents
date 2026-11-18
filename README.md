@@ -6,7 +6,7 @@
 
 **Quadro ágil minimalista, nativo, ultraleve e isolado por projeto estilo kan.bn para o Maestri Spatial Development Workspace.**
 
-🌐 **[Português](README.md)** | **[English](README.en.md)**
+**[Português](README.md)** | **[English](README.en.md)**
 
 [![Licença MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
@@ -19,7 +19,29 @@
 
 ---
 
-## 🌟 O que é
+## Apresentação Visual
+
+### Quadro Principal (Estilo kan.bn Dark)
+Visualização limpa das colunas ágeis (`Backlog`, `A Fazer`, `Em Progresso`, `Revisão`, `Concluído`), cartões com etiquetas coloridas, identificador de agente responsável e controle de sprints no topo.
+
+<p align="center">
+  <img src="assets/preview-quadro.png" alt="Kanban Minimalista - Quadro Principal" width="100%" />
+</p>
+
+### Detalhes da Tarefa & Modal de Criação Rápida
+Ao clicar em qualquer cartão, um modal de duas colunas exibe descrição editável, checklist com progresso, histórico de atividades, comentários e propriedades laterais. O modal de criação permite cadastrar múltiplas tarefas em sequência com o seletor **Criar outro**.
+
+<p align="center">
+  <img src="assets/preview-detalhes.png" alt="Kanban Minimalista - Detalhes do Cartão" width="100%" />
+</p>
+
+<p align="center">
+  <img src="assets/preview-novo-cartao.png" alt="Kanban Minimalista - Modal Novo Cartão" width="620" />
+</p>
+
+---
+
+## O que é
 
 `kanban-agents` é um gestor de tarefas visual minimalista e funcional, projetado especificamente para operar como um nó de **Portal** integrado no **Maestri Canvas** ou diretamente em uma **janela dedicada no monitor secundário** para demandas individuais e acompanhamento do time de agentes.
 
@@ -45,49 +67,49 @@ Inspirado na estética refinada do **kan.bn**, o `kanban-agents` roda com um ser
 
 ---
 
-## ✨ Destaques
+## Destaques
 
-- **🎨 Design Minimalista Preto & Cinza (Estilo kan.bn)**:
+- **Design Minimalista Preto & Cinza (Estilo kan.bn)**:
   - Paleta em tons estritamente neutros e alto contraste: Canvas em `#141414`, colunas em `#1c1c1c` e cartões elevados em `#252525` com hover em `#2e2e2e`.
   - Zero matiz azulada (*tokyo night*), eliminando o efeito de "preto sobre preto" e garantindo legibilidade perfeita.
   - Header superior consolidado (sem barra lateral redundante) liberando **100% da largura da tela** para as colunas do quadro.
   - Logo quadrado de 36px com a foto de perfil do usuário.
 
-- **⚡ Novo Modal Ágil de Criação de Tarefas**:
+- **Novo Modal Ágil de Criação de Tarefas**:
   - Título limpo, descrição rápida e barra de ações inline (Coluna, Membros, Etiquetas coloridas, Prioridade, Checklist e Anexos).
   - Interruptor funcional **"Criar outro"** para cadastro em lote contínuo de tarefas sem fechar o diálogo.
 
-- **🔍 Visualização & Edição Completa da Tarefa (Full Detail Modal)**:
+- **Visualização & Edição Completa da Tarefa (Full Detail Modal)**:
   - Clique em **qualquer área do cartão** para abrir a visualização detalhada em tela cheia.
   - Navegação por *breadcrumbs* (`workspace › sprint › CÓDIGO`).
   - Layout dividido em duas colunas:
     - **Esquerda:** Título editável, descrição detalhada, checklists com barra de progresso, timeline de atividades e caixa de comentários rápidos.
     - **Direita:** Painel lateral com seletores de coluna, etiquetas com marcadores de cores (*Teal, Blue, Purple, Yellow, Orange, Red, Pink*), prioridade e **tag identificadora do responsável/agente** (sem foto intrusiva no cartão).
 
-- **🏷️ Cartões com Tags Dot & Identificador de Responsável**:
-  - Tags estilizadas com ponto colorido lateral (ex: `● ARROW`).
+- **Cartões com Tags Dot & Identificador de Responsável**:
+  - Tags estilizadas com ponto colorido lateral (ex: `ARROW`).
   - Identificador do agente responsável no rodapé do cartão em badge minimalista de texto (ex: `Minerva`, `DevOps`).
 
-- **🏁 Ciclos de Sprint & Arquivamento Automático**:
+- **Ciclos de Sprint & Arquivamento Automático**:
   - Botão **"Finalizar Sprint"**: arquiva instantaneamente todas as tarefas da coluna **Concluído** no histórico de sprints.
   - **Limpeza do Quadro**: a coluna de concluídos é esvaziada para a próxima sprint, mantendo o ambiente limpo e focado.
   - Aba **"Sprints Arquivadas"** para auditar ciclos passados, métricas de entrega e datas a qualquer momento.
 
-- **🖱️ Drag & Drop Fluido com Anti-Flicker & Preservação de Scroll**:
+- **Drag & Drop Fluido com Anti-Flicker & Preservação de Scroll**:
   - Arraste cartões livremente entre as colunas (**Backlog**, **A Fazer**, **Em Progresso**, **Revisão**, **Concluído**).
   - Algoritmo de diffing: o painel só toca no DOM se houver mudanças reais de dados, mantendo o scroll vertical e horizontal perfeitamente fixo mesmo com sincronização ativa.
 
-- **📁 Isolamento Completo por Workspace**:
+- **Isolamento Completo por Workspace**:
   - Cada pasta de projeto possui seu próprio arquivo `.kanban/board.json`.
   - Ao alternar entre projetos no Maestri, o Kanban abre automaticamente o contexto do workspace ativo.
 
-- **🔌 Gerenciador Inteligente de Portas (Anti-Colisão Dual-Stack)**:
+- **Gerenciador Inteligente de Portas (Anti-Colisão Dual-Stack)**:
   - Opera por padrão na porta **`3334`**. Se estiver ocupada, salta automaticamente para `3335`, `3336`... e registra a porta ativa em `.maestri/ports.json`.
   - Tratamento nativo contra conflito de sockets no Windows (`SO_EXCLUSIVEADDRUSE`).
 
 ---
 
-## 🚀 Início Rápido
+## Início Rápido
 
 ### No Windows:
 
@@ -118,7 +140,7 @@ maestri portal create http://localhost:3334 "Kanban"
 
 ---
 
-## 💻 Uso
+## Uso
 
 Em qualquer terminal dentro do seu workspace no Maestri, digite:
 
@@ -181,7 +203,7 @@ Se você deseja manter o quadro Kanban **sempre visível em um monitor secundár
 
 ---
 
-## 🛠️ Como Funciona
+## Como Funciona
 
 ### 1. Detecção Atômica do Workspace
 O `kanban.py` resolve dinamicamente a pasta do projeto ativo através da variável de ambiente `MAESTRI_PROJECT_DIR`, do diretório Git pai ou de convenções do workspace.
@@ -228,7 +250,7 @@ O quadro ativo é armazenado de forma determinística e versionável na raiz do 
 Ao acionar **"Finalizar Sprint"**:
 - Os cartões presentes na coluna **Concluído** são agrupados sob a sprint atual e movidos para o vetor `sprints_arquivadas`.
 - A coluna de concluídos é limpa no quadro ativo.
-- O contador da sprint avança automaticamente (ex: `Sprint 1` ➔ `Sprint 2`).
+- O contador da sprint avança automaticamente (ex: `Sprint 1` -> `Sprint 2`).
 - Todo o histórico permanece acessível e auditável na aba de sprints arquivadas.
 
 ### 4. Gerenciamento Inteligente de Portas & Anti-Colisão
@@ -236,7 +258,7 @@ Se a porta `3334` já estiver ocupada por outra instância ou processo do sistem
 
 ---
 
-## 📡 Endpoints da API REST
+## Endpoints da API REST
 
 | Método | Endpoint | Descrição |
 |---|---|---|
@@ -249,25 +271,25 @@ Se a porta `3334` já estiver ocupada por outra instância ou processo do sistem
 
 ---
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 kanban-agents/
-├── 📁 assets/                 <-- Identidade visual, avatar e logo
-├── 📁 publico/                <-- Interface web moderna (Vanilla JS + CSS Dark kan.bn puro)
-│   ├── 📁 assets/             <-- Assets estáticos servidos pela aplicação web
-│   └── 📄 index.html          <-- Quadro Kanban, modal de criação, detalhes e sprints
-├── 📄 kanban.py               <-- Servidor HTTP nativo, anti-colisão, flags CLI e API REST
-├── 📄 iniciar-kanban.bat      <-- Launcher interativo para Windows
-├── 📄 iniciar-silencioso.vbs  <-- Launcher 100% em segundo plano (sem janela)
-├── 📄 README.md               <-- Documentação completa em Português
-├── 📄 README.en.md            <-- Full documentation in English
-└── 📄 .gitignore              <-- Regras de exclusão do Git
+├── assets/                  <-- Identidade visual, avatar, logo e capturas de tela
+├── publico/                 <-- Interface web moderna (Vanilla JS + CSS Dark kan.bn puro)
+│   ├── assets/              <-- Assets estáticos servidos pela aplicação web
+│   └── index.html           <-- Quadro Kanban, modal de criação, detalhes e sprints
+├── kanban.py                <-- Servidor HTTP nativo, anti-colisão, flags CLI e API REST
+├── iniciar-kanban.bat       <-- Launcher interativo para Windows
+├── iniciar-silencioso.vbs   <-- Launcher 100% em segundo plano (sem janela)
+├── README.md                <-- Documentação completa em Português
+├── README.en.md             <-- Full documentation in English
+└── .gitignore               <-- Regras de exclusão do Git
 ```
 
 ---
 
-## 🔒 Segurança e Privacidade
+## Segurança e Privacidade
 
 - **Operação 100% Local**: O servidor se vincula exclusivamente a `127.0.0.1` (localhost). Nenhuma tarefa, anotação ou métrica é enviada para a internet ou para serviços de nuvem externos.
 - **Gravação Atômica em Disco**: O arquivo `.kanban/board.json` é gravado utilizando operações atômicas (escrita em arquivo temporário seguida de substituição atômica), prevenindo corrupção de dados mesmo em caso de encerramento abrupto.
@@ -275,7 +297,7 @@ kanban-agents/
 
 ---
 
-## 📄 Créditos e Licença
+## Créditos e Licença
 
 Distribuído sob a licença **MIT**.
 
