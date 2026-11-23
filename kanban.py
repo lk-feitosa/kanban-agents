@@ -353,6 +353,17 @@ def abrir_portal_maestri(url, titulo="Kanban"):
     try:
         from shutil import which
         cli = os.environ.get("MAESTRI_CLI") or which("maestri") or which("maestri.exe")
+        if not cli:
+            try:
+                appimage_bins = sorted(
+                    Path("/tmp").glob(".mount_Maestr*/resources/cli/maestri"),
+                    key=lambda p: p.stat().st_mtime,
+                    reverse=True,
+                )
+                if appimage_bins:
+                    cli = str(appimage_bins[0])
+            except Exception:
+                pass
         if not cli and sys.platform == "win32":
             local_app_data = os.environ.get("LOCALAPPDATA", "")
             if local_app_data:
@@ -360,11 +371,20 @@ def abrir_portal_maestri(url, titulo="Kanban"):
                 if c.exists():
                     cli = str(c)
         if cli:
+            env = os.environ.copy()
+            if not env.get("MAESTRI_SOCKET"):
+                try:
+                    socks = sorted(Path("/tmp").glob("maestri-*/maestri.sock"), key=lambda p: p.stat().st_mtime, reverse=True)
+                    if socks:
+                        env["MAESTRI_SOCKET"] = str(socks[0])
+                except Exception:
+                    pass
             subprocess.run(
                 [cli, "portal", "create", url, titulo],
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                env=env,
                 creationflags=FLAGS_SEM_JANELA,
                 timeout=5,
             )
