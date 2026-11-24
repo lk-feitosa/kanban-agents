@@ -354,6 +354,14 @@ def abrir_portal_maestri(url, titulo="Kanban"):
         from shutil import which
         cli = os.environ.get("MAESTRI_CLI") or which("maestri") or which("maestri.exe")
         if not cli:
+            for mac_cand in [
+                Path("/Applications/Maestri.app/Contents/Resources/cli/maestri"),
+                Path.home() / "Applications" / "Maestri.app" / "Contents" / "Resources" / "cli" / "maestri",
+            ]:
+                if mac_cand.exists():
+                    cli = str(mac_cand)
+                    break
+        if not cli:
             try:
                 appimage_bins = sorted(
                     Path("/tmp").glob(".mount_Maestr*/resources/cli/maestri"),
